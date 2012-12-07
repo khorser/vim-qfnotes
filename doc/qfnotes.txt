@@ -1,0 +1,267 @@
+*qfnotes.txt*	Plugin for external file annotation
+
+Author: Sergey Khorev(sergey.khorev AT gmail DOT com)
+Based on the work of Will Drewry (redpig AT dataspill DOT org)
+For Vim version 7.2 and above
+$HGLastChangedDate$
+
+1. Overview 					|qfnotes-intro|
+2. Requirements					|qfnotes-requirements|
+3. Installation 				|qfnotes-install|
+4. Usage 					|qfnotes-using|
+5. Options 					|qfnotes-options|
+6. Commands 					|qfnotes-commands|
+7. Default Key Mappings				|qfnotes-mappings|
+8. License 					|qfnotes-license|
+9. Todo						|qfnotes-todo|
+
+==============================================================================
+							       *qfnotes-intro*
+1. Overview~
+
+QFnotes is a plugin for Vim that allows file annotation based on |quickfix|
+functionality. In particular, this plugin allows the user to tie comments to
+a specific source file, line number, and column number without modifying the
+file being reviewed.
+
+The goal of the plugin is to provide a simple and useful
+mechanism for tracking notes when reviewing any sort of text file -- from
+documents and book drafts to source code and configuration files.
+There are many instances where placing comments into the file being reviewed
+is less practical.
+
+Also it may be used as a generic |quickfix| window editor.
+
+
+==============================================================================
+							*qfnotes-requirements*
+2. Requirements~
+
+The plugin requires Vim version 7.2 and above
+
+It will work on all the platforms where Vim is supported and |quickfix| support
+is enabled.
+
+
+==============================================================================
+							     *qfnotes-install*
+3. Installation~
+
+1. You need sufficiently recent |vimball|
+2. Run:
+>
+		vim qfnotes.vmb
+<
+3. Execute the following ex command:
+>
+		:so %
+<
+4. You should now be able to bind qfnotes bindings (starting with <Plug>QuickFix)
+to your preferred key combinations.  You can use the ":help qfnotes" command at
+any time to get more information.
+
+To uninstall the plugin, you only need to execute
+>
+		:RmVimball qfnotes
+<
+If it does not work for some reason, remove the plugin/qfnotes.vim and
+doc/qfnotes.txt files manually.
+
+==============================================================================
+							       *qfnotes-using*
+4. Usage~
+
+The plugin is meant to be used during some sort of file review.  If you are
+reading a document, reviewing source code, or anything else where having a
+scratch pad for notes associated with a file and line number is useful.
+
+
+Creating a new note~
+
+With default |qfnotes-mappings| you may press \qn on a line you'd like to
+comment. You'll be prompted for your note. Type it in, press enter, and you're
+done.
+
+Viewing your notes~
+
+If you'd like to see the notes as they are being taken, simply use the normal
+|quickfix| commands.  For example, |copen| will open the |quickfix| window.
+You can customize it in any way that is normally allowed.
+
+You can also open the |quickfix| window on startup using the following command
+line:
+>
+		$ vim +copen
+<
+
+Saving your notes~
+
+If you're taking the time to make these notes, you may also want to keep them
+for longer than just the time Vim is running.
+Default |qfnotes-mappings| allow pressing of \qs to save notes to a file
+determined by |g:QFXDefaultFileName| variable.
+To customise file name and saving ranges see |:QFXSave| and |:QFXSaveRange|
+
+Loading a note~
+
+|:QFXLoad| command may be used to load notes. Default mapping allows
+use of \ql to load a file with default name from the current directory
+
+Alternatively, you may use normal |quickfix| commands like |:cfile| to
+load your notes. If Vim cannot parse the file, try setting 'errorformat'
+to its default value:
+>
+		set errorformat&
+<
+
+Editing and deleting a note~
+
+To delete a comment you may press \qd in the source or |quickfix| window:
+\qe allows editing of the current note.
+\qE allows opening notes file in a Vim buffer. Every save of the buffer
+will overwrite your current |quickfix| list.
+
+Troubleshooting~
+
+If |:grep|, |:make|, or other |quickfix| command clobbered your notes, you can
+restore them with |:colder| command.
+
+Quickfix notes are stored in an |unlisted-buffer|. You may find it with |:ls|
+(:ls!) command and work with your data directly.
+
+==============================================================================
+							     *qfnotes-options*
+5. Options~
+
+				   *QFXDefaultFileName* *g:QFXDefaultFileName*
+								*quickfix.err*
+g:QFXDefaultFileName
+		Default notes file name (default value "quickfix.err")
+		When defined but left blank, current value of 'errorfile'
+		is used.
+
+					       *QFXUseDialog* *g:QFXUseDialog*
+g:QFXUseDialog
+		If possible, use GUI dialogs for entering comments.
+
+							*g:QFXDefaultMappings*
+g:QFXDefaultMappings
+		If the variable exists and is 0, default keymappings are not
+		created.
+
+==============================================================================
+							    *qfnotes-commands*
+6. Commands~
+
+The plugin provides the following ex-mode commands:
+
+|:QFXSave|	Saves the |quickfix| window contents
+|:QFXSaveRange|	Saves a part of the |quickfix| list
+|:QFXLoad|	Loads notes file
+|:QFXOpen|	Opens notes file for edit
+|:QFXAdd|	Adds a new note for the current line
+|:QFXAddQ|	Adds a new note for the current line
+|:QFXDelete|	Deletes notes for the current line
+|:QFXEdit|	Edits current note
+
+								    *:QFXSave*
+:QFXSave[!] [file]
+		Save the |quickfix| list to the specified [file]
+		The command works both in buffers and in |quickfix| window:
+>
+		:QFXSave quickfix.err
+<
+
+							       *:QFXSaveRange*
+:[range]QFXSaveRange[!] {file}
+		Saves a part of |quickfix| list.
+
+								    *:QFXLoad*
+:QFXLoad [file]
+:QFXLoad {file} [basedir]
+		Loads notes file to the |quickfix| window from {file}
+		[basedir] is a base directory for relative filenames
+		in the file
+
+								     *:QFXAdd*
+:QFXAdd {text}
+		Add a quickfix entry with the given text for the current file,
+		line, and colum.
+
+								    *:QFXAddQ*
+:QFXAddQ
+		Add a note with text derived from prompting the user.
+
+								  *:QFXDelete*
+:QFXDelete
+		Delete comments for the current line.
+
+								    *:QFXEdit*
+:QFXEdit[!]
+		Edit note for the current line (asks user for new text).
+		If there is no comment, adds new. For empty input deletes
+		current comment.
+		:QFXEdit! will open notes file in a buffer and position cursor
+		on selected comment.
+		To split window, you may use
+>
+		:split +QFXEdit!
+<
+		NOTE
+		Every save of the buffer will overwrite your current
+		|quickfix| list.
+
+								      *QFXNew*
+:QFXNew [file]
+		Start new note taking session
+
+==============================================================================
+							   *qfnotes-mappings*
+7. Default Key Mappings~
+
+<Leader>qn  - add a new note (or edit current)
+<Leader>qd  - delete selected note(s)
+<Leader>qe  - edit selected note(s)
+<Leader>qE  - edit selected note in a buffer
+
+<Leader>qs  - save current notes file
+<Leader>ql  - load notes file with default name (see |g:QFXDefaultFileName|)
+
+Code to create the mappings is below:
+>
+		map <Leader>qn <Plug>QuickFixNote
+		map <Leader>qd <Plug>QuickFixDelete
+		map <Leader>qe <Plug>QuickFixEdit
+		map <Leader>qE <Plug>QuickFixBuffer
+
+		map <Leader>qs <Plug>QuickFixSave
+		map <Leader>ql <Plug>QuickFixLoad
+<
+
+To turn the mappings off, put the following into your |.vimrc|:
+>
+		let g:QFXDefaultMappings = 0
+<
+
+==============================================================================
+							     *qfnotes-license*
+8. License~
+
+Permission is hereby granted to use and distribute the qfn plugin, with or
+without modifications, provided that this copyright notice is copied with it
+and attribution is included.  Like anything else that's free, qfn.vim is
+provided *as is* and comes with no warranty of any kind, either expressed or
+implied. In no event will the copyright holder be liable for any damamges
+resulting from the use of this software.
+
+==============================================================================
+								*qfnotes-todo*
+9. Todo~
+
+* Allow to move notes (useful if reviewed files have been changed)
+* Issue a warning if a quickfix command is going to overwrite our list
+* ?
+
+==============================================================================
+
+vim:tw=78:ts=8:noet:ft=help:
