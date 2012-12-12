@@ -4,6 +4,10 @@ Author: Sergey Khorev(sergey.khorev AT gmail DOT com)
 Based on the work of Will Drewry (redpig AT dataspill DOT org)
 For Vim version 7.2 and above
 $HGLastChangedDate$
+    http://www.vim.org/scripts/script.php?script_id=4347
+    https://bitbucket.org/khorser/vim-qfnotes
+    https://github.com/khorser/vim-qfnotes
+
 
 1. Overview 					|qfnotes-intro|
 2. Requirements					|qfnotes-requirements|
